@@ -37,7 +37,6 @@ function addAllColumnHeaders(arr, table) {
 }
 
 window.onload = () => {
-  window.initWinFocus();
   let status = document.getElementById("status");
   let socket = io(window.location.host);
   
