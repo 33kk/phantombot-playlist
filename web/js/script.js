@@ -57,10 +57,7 @@ Vue.component('songlist', {
                 if (hours > 0) {
                     res += hours + ':';
                 }
-                if (minutes > 0) {
-                    res += minutes + ':';
-                }
-                return res + seconds;
+                return res + minutes + ':' + seconds;
             }
             let result = 0;
             for (let i = 0; i < index ; i++) {
