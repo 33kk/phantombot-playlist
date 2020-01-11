@@ -25,7 +25,7 @@
                 <div class="video-container" v-if="iframe"><iframe frameborder="0" defer class="preview" :src="'https://youtube.com/embed/'+currentsong.song" alt="Preview"></iframe></div>
                 <img  v-else class="preview" :src="'https://img.youtube.com/vi/'+currentsong.song+'/maxresdefault.jpg'" alt="Preview"></img>
                 <songlist :songlist="currentsong.song !== undefined ? [currentsong] : []" :show-requester="true" :show-times="false" :show-numbers="false" title="Now playing"></songlist>
-                <songlist :songlist="history" :show-requester="true" :show-times="times" :show-numbers="true" title="Previous"></songlist>
+                <songlist :songlist="history" :show-requester="true" :show-times="false" :show-numbers="true" title="Previous"></songlist>
             </div>
             <div class="col-lg-8 col-12 fix-padding-left">
                 <songlist :songlist="songlist" :show-requester="true" :show-times="times" :show-numbers="true" title="Next"></songlist>
