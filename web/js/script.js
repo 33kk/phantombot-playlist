@@ -34,7 +34,7 @@ Vue.component('songlist', {
         }
     },
     template: `
-    <div >
+    <div style="overflow: auto">
         <table>
             <thead>
                 <tr>
@@ -47,7 +47,7 @@ Vue.component('songlist', {
                     <th><p>Requester</p></th>
                 </tr>
             </thead>
-            <tbody style="overflow: auto">
+            <tbody>
                 <tr v-if="songlist.length > 0" v-for="(song, index) in songlist">
                     <td width="2%" v-if="showNumbers"><p>{{ index + 1 }}</p></td>
                     <td><a :href="'https://youtu.be/'+song.song">{{ song.title }}</a></td>
@@ -65,6 +65,7 @@ let vue = new Vue({
         currentsong: {},
         songlist: [],
         playlist: [],
+        history: [],
         connected: false,
         iframe: false
     },
@@ -117,3 +118,4 @@ socket.on("disconnect", () => {
 socket.on("currentsong", data => vue.currentsong = data);
 socket.on("songlist", data => vue.songlist = data);
 socket.on("playlist", data => vue.playlist = data);
+socket.on("history", data => vue.history = data);

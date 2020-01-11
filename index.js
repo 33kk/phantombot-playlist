@@ -37,6 +37,7 @@ function addToHistory(song) {
         history.pop();
     }
     socketServer.sockets.emit("history", history);
+    console.log(history);
 }
 
 socketClient.onopen = function(e) {
