@@ -12,11 +12,11 @@
     <div id="app">
         <header class="row">
             <h3 class="col align-self-center">PhantomBot Playlist</h3>
-            <i class="col-auto margin fas fa-signal align-self-center" v-if="connected"></i>
-            <i class="col-auto margin fas fa-exclamation align-self-center" v-else></i>
-            <i class="col-auto margin fas fa-hourglass align-self-center" @click="toggleTimes"></i>
-            <i class="col-auto margin fas fa-play align-self-center" @click="togglePlayer"></i>
-            <i class="col-auto margin fas fa-moon align-self-center" @click="toggleTheme"></i>
+            <i class="col-auto fas fa-signal align-self-center" v-if="connected"></i>
+            <i class="col-auto fas fa-exclamation align-self-center" v-else></i>
+            <i class="col-auto fas fa-hourglass align-self-center" @click="toggleTimes"></i>
+            <i class="col-auto fas fa-play align-self-center" @click="togglePlayer"></i>
+            <i class="col-auto fas fa-moon align-self-center" @click="toggleTheme"></i>
         </header>
         
         <div class="row">
