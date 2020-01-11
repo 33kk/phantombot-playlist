@@ -12,8 +12,8 @@
     <div id="app">
         <header class="row">
             <h3 class="margin col align-self-center">PhantomBot Playlist</h3>
-            <h6 class="margin col align-self-center">made by 33KK</h6>
             <p class="margin col-auto align-self-center">{{ connected ? "Connected" : "Disconnected"}}</p>
+            <i class="col-auto margin fas fa-play align-self-center" @click="togglePlayer"></i>
             <i class="col-auto margin fas fa-moon align-self-center" @click="toggleTheme"></i>
         </header>
         
@@ -21,7 +21,8 @@
             
             <div class="col-lg-4 col-12 fix-padding-right">
                 <songlist :songlist="currentsong.song !== undefined ? [currentsong] : []" :show-numbers="false" title="Now playing"></songlist>
-                <div class="video-container"><iframe class="preview" :src="'https://youtube.com/embed/'+currentsong.song" alt="ay"></iframe></div>
+                <div class="video-container" v-if="iframe"><iframe defer class="preview" :src="'https://youtube.com/embed/'+currentsong.song" alt="ay"></iframe></div>
+                <img  v-else class="preview" :src="'https://img.youtube.com/vi/'+currentsong.song+'/maxresdefault.jpg'" alt="ay"></img>
             </div>
             <div class="col-lg-8 col-12 fix-padding-left">
                 <songlist :songlist="songlist" :show-numbers="true" title="Requests"></songlist>

@@ -1,4 +1,27 @@
-document.getElementById("body").className = document.cookie;
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+if (getCookie("dark") === "true")
+    document.getElementById("body").className = "dark";
 
 Vue.component('songlist', {
     props: ['songlist', 'title', 'showNumbers'],
@@ -42,22 +65,38 @@ let vue = new Vue({
         currentsong: {},
         songlist: [],
         playlist: [],
-        connected: false
+        connected: false,
+        iframe: false
     },
     methods: {
+        setCookie: setCookie,
+        getCookie: getCookie,
         toggleTheme: function() {
             let body = document.getElementById("body");
             if (body.className === "dark") {
                 body.className = "";
-                document.cookie = "";
+                this.setCookie("dark", "false", "99999");
             }
             else {
                 body.className = "dark";
-                document.cookie = "dark";
+                this.setCookie("dark", "true", "99999");
+            }
+        },
+        togglePlayer: function () {
+            if (this.iframe) {
+                this.iframe = false;
+                this.setCookie("iframe", "false", "99999");
+            }
+            else {
+                this.iframe = true;
+                this.setCookie("iframe", "true", "99999");
             }
         }
     }
 });
+
+if (getCookie("iframe") === "true")
+    vue.iframe = true;
 
 let socket = io(window.location.host);
 
