@@ -66,7 +66,8 @@ socketClient.onmessage = function(edata) {
     if (messageObject.currentsong !== undefined) {
         let moStr = JSON.stringify(messageObject.currentsong);
         if (moStr !== oldData.currentsong) {
-            addToHistory(JSON.parse(oldData.currentsong));
+            if (oldData.currentsong !== undefined)
+                addToHistory(JSON.parse(oldData.currentsong));
             oldData.currentsong = moStr;
             data.currentsong = messageObject.currentsong;
             socketServer.sockets.emit("currentsong", messageObject.currentsong);
