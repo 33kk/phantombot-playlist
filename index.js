@@ -68,8 +68,8 @@ socketClient.onmessage = function(edata) {
         if (moStr !== oldData.currentsong) {
             try {
                 let oldO = JSON.parse(oldData.currentsong);
-                if (oldData.currentsong !== undefined)
-                    addToHistory(oldData.currentsong);
+                if (oldO !== undefined)
+                    addToHistory(oldO);
             }
             catch {
                 console.log('JSON parse error');
