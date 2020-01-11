@@ -23,7 +23,7 @@
                 <songlist :songlist="currentsong.song !== undefined ? [currentsong] : []" :show-numbers="false" title="Now playing"></songlist>
                 <div class="video-container" v-if="iframe"><iframe defer class="preview" :src="'https://youtube.com/embed/'+currentsong.song" alt="ay"></iframe></div>
                 <img  v-else class="preview" :src="'https://img.youtube.com/vi/'+currentsong.song+'/maxresdefault.jpg'" alt="ay"></img>
-                <songlist :songlist="history" :show-numbers="false" title="History"></songlist>
+                <songlist :songlist="history" :show-numbers="true" title="History"></songlist>
             </div>
             <div class="col-lg-8 col-12 fix-padding-left">
                 <songlist :songlist="songlist" :show-numbers="true" title="Requests"></songlist>
