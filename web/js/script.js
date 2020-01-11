@@ -34,7 +34,7 @@ Vue.component('songlist', {
         }
     },
     template: `
-    <div style="overflow: auto">
+    <div >
         <table>
             <thead>
                 <tr>
@@ -47,7 +47,7 @@ Vue.component('songlist', {
                     <th><p>Requester</p></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody style="overflow: auto">
                 <tr v-if="songlist.length > 0" v-for="(song, index) in songlist">
                     <td width="2%" v-if="showNumbers"><p>{{ index + 1 }}</p></td>
                     <td><a :href="'https://youtu.be/'+song.song">{{ song.title }}</a></td>

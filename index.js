@@ -30,6 +30,15 @@ let oldData = {
     playlist: ""
 };
 
+let history = [];
+function addToHistory(song) {
+    history.unshift(song);
+    if (history.length > 5) {
+        history.pop();
+    }
+    socketServer.sockets.emit("history", history);
+}
+
 socketClient.onopen = function(e) {
     console.log("Connected");
     fetch(con.wproto + con.host + con.wport + "/playlist/js/playerConfig.js")
@@ -56,6 +65,7 @@ socketClient.onmessage = function(edata) {
     if (messageObject.currentsong !== undefined) {
         let moStr = JSON.stringify(messageObject.currentsong);
         if (moStr !== oldData.currentsong) {
+            addToHistory(oldData.currentsong);
             oldData.currentsong = moStr;
             data.currentsong = messageObject.currentsong;
             socketServer.sockets.emit("currentsong", messageObject.currentsong);
@@ -109,6 +119,7 @@ socketServer.on("connection", function(socket) {
     socket.emit("playlist", data.playlist);
     socket.emit("songlist", data.songlist);
     socket.emit("currentsong", data.currentsong);
+    socket.emit("history", history);
     socket.on("wow", () => {
         if (checkForUpdates === false) {
             requestData();
