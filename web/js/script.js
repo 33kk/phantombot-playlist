@@ -5,32 +5,35 @@ Vue.component('songlist', {
     methods: {
         ytopen: function(id) {
             window.open('https://youtu.be/' + id);
+        },
+        trimString: function (id) {
+            window.open('https://youtu.be/' + id);
         }
     },
     template: `
-    <table>
-        <thead>
-            <tr>
-                <th colspan=5><p style="font-size: 1.25rem">{{ title }}</p></th>
-            </tr>
-            <tr>
-                <th v-if="showNumbers"><p>№</p></th>
-                <th><p>Name</p></th>
-                <th><p>Duration</p></th>
-                <th><p>Requester</p></th>
-                <th><p>YT</p></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-if="songlist.length > 0" v-for="(song, index) in songlist">
-                <td width="2%" v-if="showNumbers"><p>{{ index + 1 }}</p></td>
-                <td><p>{{ song.title }}</p></td>
-                <td width="6%"><p>{{ song.duration }}</p></td>
-                <td width="10%"><p>{{ song.requester ? song.requester : "-" }}</p></td>
-                <td width="3%"><i class="fab fa-youtube" @click="ytopen(song.song)" target="_blank"/></td>
-            </tr>
-        </tbody>
-    </table>
+    <div style="overflow: auto">
+        <table>
+            <thead>
+                <tr>
+                    <th colspan=5><p style="font-size: 1.25rem">{{ title }}</p></th>
+                </tr>
+                <tr>
+                    <th v-if="showNumbers"><p>№</p></th>
+                    <th><p>Name</p></th>
+                    <th><p>Duration</p></th>
+                    <th><p>Requester</p></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-if="songlist.length > 0" v-for="(song, index) in songlist">
+                    <td width="2%" v-if="showNumbers"><p>{{ index + 1 }}</p></td>
+                    <td><a :href="'https://youtu.be/'+song.song">{{ song.title }}</a></td>
+                    <td width="6%"><p>{{ song.duration }}</p></td>
+                    <td width="10%"><p>{{ song.requester ? song.requester : "-" }}</p></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 `})
 
 let vue = new Vue({

@@ -93,6 +93,14 @@ body.dark .preview {
   margin: 0 !important;
 }
 
+body.dark a {
+  color: white;
+}
+
+a {
+  color: #222;
+}
+
 /* Fix paddings CoolStoryBob */
 @media screen and (min-width: 992px) {
   .fix-padding-right {
