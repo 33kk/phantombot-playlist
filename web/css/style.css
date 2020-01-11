@@ -1,0 +1,105 @@
+table {
+  color: #333; /* Lighten up font color */
+  font-family: Helvetica, Arial, sans-serif; /* Nicer font */
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+body.dark {
+  background: rgb(31, 31, 31);
+  color: #fff;
+}
+
+body.dark table {
+  color: #ddd
+}
+
+td,
+th {
+  border: 1px solid #ccc;
+  height: 30px;
+  font-size: 15px;
+  padding: 5px;
+  vertical-align: middle;
+} /* Make cells a bit taller */
+
+body.dark td,
+body.dark th {
+  border: 1px solid rgb(77, 77, 77);
+}
+
+th {
+  background: rgb(243, 243, 243); /* Light grey background */
+  font-weight: bold; /* Make sure they're bold */
+}
+
+body.dark th {
+  background: #333333;;
+}
+
+td {
+  background: #fafafa; /* Lighter grey background */
+  text-align: center; /* Center our text */
+}
+
+body.dark td {
+  background: #2b2b2b;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin-top: 0;
+}
+
+p {
+  margin: 0;
+}
+
+header {
+  margin-top: 0;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  background: #ddd;
+}
+
+body.dark header {
+  background: #333333;
+}
+
+header * {
+  display: inline-block;
+}
+
+.margin {
+  margin: 15px
+}
+.preview {
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  border: 1px solid #ddd;
+  margin-bottom: 5px;
+}
+
+body.dark .preview {
+  border: 1px solid rgb(77, 77, 77);
+}
+
+.col {
+  margin: 0 !important;
+}
+
+/* Fix paddings CoolStoryBob */
+@media screen and (min-width: 992px) {
+  .fix-padding-right {
+    padding-right: 5px !important;
+  }
+
+  .fix-padding-left {
+    padding-left: 5px !important;
+  }
+}

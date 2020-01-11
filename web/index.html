@@ -4,18 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="./style.css" type="text/css">
-    <title>PhantomBot Playlist Viewer by 33KK</title>
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    <link rel="stylesheet" href="./css/bootstrap-grid.css" crossorigin="anonymous">
+    <title>PhantomBot Playlist by 33KK</title>
 </head>
-<body>
-    <p id="status" class="disconnected">...</p>
-    <p>Now playing</p>
-    <div id="currentsong"></div>
-    <p>Requests</p>
-    <div id="songlist"></div>
-    <p>Playlist</p>
-    <div id="playlist"></div>
-    <script src="./script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<body class="dark" id="body" style="padding-bottom: 50px;">
+    <div id="app">
+        <header class="row">
+            <h3 class="margin col align-self-center">PhantomBot Playlist</h3>
+            <h6 class="margin col align-self-center">made by 33KK</h6>
+            <p class="margin col-auto align-self-center">{{ connected ? "Connected" : "Disconnected"}}</p>
+            <i class="col-auto margin fas fa-moon align-self-center" @click="toggleTheme"></i>
+        </header>
+        
+        <div class="row">
+            
+            <div class="col-lg-4 col-12 fix-padding-right">
+                <songlist :songlist="currentsong.song !== undefined ? [currentsong] : []" :show-numbers="false" title="Now playing"></songlist>
+                <img class="preview" :src="'https://img.youtube.com/vi/'+currentsong.song+'/maxresdefault.jpg'" alt="ay">
+            </div>
+            <div class="col-lg-8 col-12 fix-padding-left">
+                <songlist :songlist="songlist" :show-numbers="true" title="Requests"></songlist>
+                <songlist :songlist="playlist" :show-numbers="true" title="Playlist"></songlist>
+            </div>
+        </div>
+    </div>
+    <script src="./js/vue.min.js"></script>
+    <script src="./js/socket.io.js"></script>
+    <script src="./js/script.js"></script>
+    <script src="https://kit.fontawesome.com/15a7b0d344.js" crossorigin="anonymous" defer></script>
 </body>
 </html>

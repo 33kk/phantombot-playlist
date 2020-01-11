@@ -6,38 +6,29 @@ let con = {
     wsproto: process.env.WSPROTO || "ws://",
     port: process.env.PORT || 1337
 };
+const fetch = require("node-fetch");
+const express = require("express");
+const WebSocketClient = require("./ws.js");
 
-let data = {
-    currentsong: [],
-    songlist: [],
-    playlist: []
-};
-let oldMessageObject = {
-    currentsong: [],
-    songlist: [],
-    playlist: []
-};
-
-
-
-let app = require("express")();
+let app = express();
 let httpServer = require("http").createServer(app);
+app.use(express.static('web'))
+
 let socketServer = require("socket.io")(httpServer);
-
-app.get("/", function(_, res) {
-    res.sendFile(__dirname + "/web/index.html");
-});
-app.get("/script.js", function(_, res) {
-    res.sendFile(__dirname + "/web/script.js");
-});
-app.get("/style.css", function(_, res) {
-    res.sendFile(__dirname + "/web/style.css");
-});
-
-let fetch = require("node-fetch");
-let WebSocketClient = require("./ws.js");
 let socketClient = new WebSocketClient();
 socketClient.open(con.wsproto + con.host + con.wsport);
+
+let data = {
+    currentsong: {},
+    songlist: [],
+    playlist: []
+};
+
+let oldData = {
+    currentsong: "",
+    songlist: "",
+    playlist: ""
+};
 
 socketClient.onopen = function(e) {
     console.log("Connected");
@@ -63,82 +54,37 @@ socketClient.onmessage = function(edata) {
     }
 
     if (messageObject.currentsong !== undefined) {
-        let newdata = JSON.stringify(messageObject.currentsong);
-        if (
-            newdata ===
-            oldMessageObject.currentsong
-        )
-            return;
-        data.currentsong = formatCurrentSong(messageObject.currentsong);
-        socketServer.sockets.emit("currentsong", data.currentsong);
-        oldMessageObject.currentsong = newdata;
+        let moStr = JSON.stringify(messageObject.currentsong);
+        if (moStr !== oldData.currentsong) {
+            oldData.currentsong = moStr;
+            data.currentsong = messageObject.currentsong;
+            socketServer.sockets.emit("currentsong", messageObject.currentsong);
+        }
         return;
     }
 
     if (messageObject.songlist !== undefined) {
-        let newdata = JSON.stringify(messageObject.songlist);
-        if (
-            newdata ===
-            oldMessageObject.songlist
-        )
-            return;
-        data.songlist = formatList(messageObject.songlist);
-        socketServer.sockets.emit("songlist", data.songlist);
-        oldMessageObject.songlist = newdata;
+        let moStr = JSON.stringify(messageObject.songlist);
+        if (moStr !== oldData.songlist) {
+            oldData.songlist = moStr;
+            data.songlist = messageObject.songlist;
+            socketServer.sockets.emit("songlist", messageObject.songlist);
+        }
         return;
     }
 
     if (messageObject.playlist !== undefined) {
-        let newdata = JSON.stringify(messageObject.playlist);
-        if (
-            newdata ===
-            oldMessageObject.playlist
-        )
-            return;
-        data.playlist = formatList(messageObject.playlist);
-        socketServer.sockets.emit("playlist", data.playlist);
-        oldMessageObject.playlist = JSON.stringify(messageObject.playlist);
+        let moStr = JSON.stringify(messageObject.playlist);
+        if (moStr !== oldData.playlist) {
+            oldData.playlist = moStr;
+            data.playlist = messageObject.playlist;
+            socketServer.sockets.emit("playlist", messageObject.playlist);
+        }
         return;
     }
 };
 
-function createSongObject(title, duration, requester, id) {
-    return {
-        Title: title !== undefined ? title : "-",
-        Duration: duration !== undefined ? duration : "-",
-        Requester: requester !== undefined ? requester : "-",
-        ID: id !== undefined ? id : "-"
-    };
-}
-
-function formatCurrentSong(currentsong) {
-    if (currentsong === undefined) return createSongObject();
-    return [
-        createSongObject(
-            currentsong.title,
-            currentsong.duration,
-            currentsong.requester,
-            currentsong.song
-        )
-    ];
-}
-
-function formatList(list) {
-    let newList = [];
-    if (list !== undefined)
-        list.forEach(o => {
-            newList.push(createSongObject(o.title, o.duration, o.requester, o.song));
-        });
-    return newList;
-}
-
 let checkForUpdates = false;
-
-setInterval(() => {
-    if (checkForUpdates === true) {
-        requestData();
-    }
-}, 10000);
 
 function requestData() {
     socketClient.send(JSON.stringify({
@@ -152,7 +98,11 @@ function requestData() {
     }));
 }
 
-
+setInterval(() => {
+    if (checkForUpdates === true) {
+        requestData();
+    }
+}, 10000);
 
 let updateTimeout;
 socketServer.on("connection", function(socket) {
@@ -171,6 +121,8 @@ socketServer.on("connection", function(socket) {
     });
 });
 
-httpServer.listen(con.port, function() {
+
+
+httpServer.listen(con.port, function () {
     console.log("Listening on", con.port);
 });
