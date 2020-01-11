@@ -47,8 +47,11 @@ body.dark td {
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
   margin-top: 0;
+}
+
+body, h3 {
+  font-family: Arial, Helvetica, sans-serif !important;
 }
 
 p {
