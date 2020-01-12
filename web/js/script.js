@@ -1,93 +1,95 @@
-function getCookie(cname) {
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
+function toSeconds(str) {
+    var p = str.split(':'),
+        s = 0, m = 1;
+    while (p.length > 0) {
+        s += m * parseInt(p.pop(), 10);
+        m *= 60;
     }
-    return "";
+    return s;
 }
-function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires=" + d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+function toHms(totalSeconds) {
+    hours = Math.floor(totalSeconds / 3600);
+    totalSeconds %= 3600;
+    minutes = Math.floor(totalSeconds / 60);
+    seconds = totalSeconds % 60;
+    if (seconds < 10) {
+        seconds = '0' + seconds;
+    }
+    if (minutes < 10) {
+        minutes = '0' + minutes;
+    }
+    let res = '';
+    if (hours > 0) {
+        res += hours + ':';
+    }
+    return res + minutes + ':' + seconds;
 }
-
-if (getCookie("dark") === "true")
-    document.getElementById("body").className = "dark";
+function setAndSave(object, key, value) {
+    object[key] = value;
+    localStorage.setItem(key, value);
+}
+function toggleBool(object, key) {
+    setAndSave(object, key, !object[key]);
+}
+function loadSavedBool(key) {
+    let item = localStorage.getItem(key);
+    return item === null ? undefined : item === 'true';
+}
+function copy(text) {
+    var textArea = document.createElement("textarea");
+    textArea.setAttribute("style", "position: fixed; top: 0; left: 0; width: 2em; height: 2em; padding: 0; border: none; outline: none; background: transparent");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        document.execCommand('copy');
+    } catch {}
+    document.body.removeChild(textArea);
+}
 
 Vue.component('songlist', {
-    props: ['songlist', 'title', 'showNumbers', 'showTimes', 'showRequester'],
+    props: ['songlist', 'title', 'show-index', 'show-after', 'show-requester', 'show-duration', 'negative-index', 'zero-index'],
     methods: {
-        ytopen: function(id) {
-            window.open('https://youtu.be/' + id);
-        },
-        trimString: function (id) {
-            window.open('https://youtu.be/' + id);
+        trimString: function (str) {
+            if (str.length > 10) {
+                str = str.substring(0, 9) + '…';
+            }
+            return str;
         },
         sumPreviousTimes: function(index, object) {
-            function hmsToSecondsOnly(str) {
-                var p = str.split(':'),
-                    s = 0, m = 1;
-                while (p.length > 0) {
-                    s += m * parseInt(p.pop(), 10);
-                    m *= 60;
-                }
-                return s;
-            }
-            function toHms(totalSeconds) {
-                hours = Math.floor(totalSeconds / 3600);
-                totalSeconds %= 3600;
-                minutes = Math.floor(totalSeconds / 60);
-                seconds = totalSeconds % 60;
-                if (seconds < 10) {
-                    seconds = '0' + seconds;
-                }
-                if (minutes < 10) {
-                    minutes = '0' + minutes;
-                }
-                let res = '';
-                if (hours > 0) {
-                    res += hours + ':';
-                }
-                return res + minutes + ':' + seconds;
-            }
             let result = 0;
             for (let i = 0; i < index ; i++) {
-                result += hmsToSecondsOnly(object[i].duration);
+                result += this.toSeconds(object[i].duration);
             }
-            return toHms(result);
-        }
+            return this.toHms(result);
+        },
+        copy: copy,
+        toSeconds: toSeconds,
+        toHms: toHms
     },
     template: `
-    <div style="overflow: auto">
+    <div style="overflow-x: auto">
         <table>
             <thead>
                 <tr>
                     <th colspan=5><p style="font-size: 1.25rem">{{ title }}</p></th>
                 </tr>
                 <tr>
-                    <th v-if="showNumbers"><p>№</p></th>
+                    <th v-if="showIndex" style="width: 40px"><p>№</p></th>
                     <th><p>Name</p></th>
-                    <th><p>Duration</p></th>
-                    <th v-if="showTimes"><p>After</p></th>
-                    <th v-if="showRequester"><p>Requester</p></th>
+                    <th v-if="showRequester" style="width: 100px"><p>Requester</p></th>
+                    <th v-if="showAfter" style="width: 80px"><p>After</p></th>
+                    <th v-if="showDuration" style="width: 80px"><p>Duration</p></th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-if="songlist.length > 0" v-for="(song, index) in songlist">
-                    <td width="2%" v-if="showNumbers"><p>{{ index + 1 }}</p></td>
-                    <td><a :href="'https://youtu.be/'+song.song">{{ song.title }}</a></td>
-                    <td width="6%"><p>{{ song.duration }}</p></td>
-                    <td width="6%" v-if="showTimes"><p>{{ sumPreviousTimes(index, songlist) }}</p></td>
-                    <td width="10%" v-if="showRequester"><p>{{ song.requester ? song.requester : "-" }}</p></td>
+                    <td v-if="showIndex"><a @click="copy(song.song)" :title="'Copy ' + song.song + ' to clipboard'">{{ zeroIndex ? '0' : (negativeIndex ? '-' + (index + 1) : index + 1) }}</a></td>
+                    <td><a :href="'https://youtu.be/'+song.song" target="_blank">{{ song.title }}</a></td>
+                    <td v-if="showRequester"><a :href="'https://twitch.tv/' + song.requester" :title="song.requester" target="_blank">{{ song.requester ? trimString(song.requester) : "-" }}</a></td>
+                    <td v-if="showAfter"><p>{{ sumPreviousTimes(index, songlist) }}</p></td>
+                    <td v-if="showDuration"><p>{{ toHms(toSeconds(song.duration)) }}</p></td>
                 </tr>
             </tbody>
         </table>
@@ -101,51 +103,41 @@ let vue = new Vue({
         songlist: [],
         playlist: [],
         history: [],
-        connected: false,
-        iframe: false,
-        times: false
+        isConnected: false,
+        showPlayer: false,
+        showAfter: false,
+        showDuration: true,
+        showIndex: true,
+        showRequester: true
     },
     methods: {
-        setCookie: setCookie,
-        getCookie: getCookie,
-        toggleTheme: function() {
+        toggleBool: toggleBool,
+        loadSavedBool: loadSavedBool,
+        toggleDarkTheme: function() {
             let body = document.getElementById("body");
-            if (body.className === "dark") {
-                body.className = "";
-                this.setCookie("dark", "false", "99999");
-            }
-            else {
-                body.className = "dark";
-                this.setCookie("dark", "true", "99999");
-            }
+            this.toggleBool(this, 'darkTheme');
+            body.className = this.loadSavedBool('darkTheme') ? 'dark' : '';
         },
-        togglePlayer: function () {
-            if (this.iframe) {
-                this.iframe = false;
-                this.setCookie("iframe", "false", "99999");
-            }
-            else {
-                this.iframe = true;
-                this.setCookie("iframe", "true", "99999");
-            }
-        },
-        toggleTimes: function () {
-            if (this.times) {
-                this.times = false;
-                this.setCookie("times", "false", "99999");
-            }
-            else {
-                this.times = true;
-                this.setCookie("times", "true", "99999");
-            }
-        }
+        toggleShowPlayer: function() { this.toggleBool(this, 'showPlayer') },
+        toggleShowAfter: function () { this.toggleBool(this, 'showAfter') },
+        toggleShowIndex: function () { this.toggleBool(this, 'showIndex') },
+        toggleShowRequester: function () { this.toggleBool(this, 'showRequester') },
+        toggleShowDuration: function () { this.toggleBool(this, 'showDuration') }
     }
 });
 
-if (getCookie("iframe") === "true")
-    vue.iframe = true;
-if (getCookie("times") === "true")
-    vue.times = true;
+if (loadSavedBool("darkTheme"))
+    document.getElementById("body").className =  'dark';
+if (loadSavedBool("showPlayer") !== undefined)
+    vue.showPlayer = loadSavedBool("showPlayer");
+if (loadSavedBool("showAfter") !== undefined)
+    vue.showAfter = loadSavedBool("showAfter");
+if (loadSavedBool("showDuration") !== undefined)
+    vue.showDuration = loadSavedBool("showDuration");
+if (loadSavedBool("showRequester") !== undefined)
+    vue.showRequester = loadSavedBool("showRequester");
+if (loadSavedBool("showIndex") !== undefined)
+    vue.showIndex = loadSavedBool("showIndex");
 
 let socket = io(window.location.host);
 
@@ -155,12 +147,12 @@ socket.on("connect", () => {
     setInterval(() => {
         socket.emit("wow");
     }, 10000)
-    vue.connected = true;
+    vue.isConnected = true;
 })
 
 socket.on("disconnect", () => {
     console.log("Socket disconnected!");
-    vue.connected = false;
+    vue.isConnected = false;
 });
 
 socket.on("currentsong", data => vue.currentsong = data);

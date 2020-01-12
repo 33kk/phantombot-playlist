@@ -6,30 +6,34 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="./css/style.css" type="text/css">
     <link rel="stylesheet" href="./css/bootstrap-grid.css" crossorigin="anonymous">
-    <title>PhantomBot Playlist by 33KK</title>
+    <title>ZakvielBot Playlist by 33KK</title>
 </head>
-<body class="dark" id="body" style="padding-bottom: 50px;">
+<body id="body" style="overflow-x: hidden">
     <div id="app">
         <header class="row">
-            <h3 class="col align-self-center">Playlist</h3>
-            <i class="col-auto fas fa-signal align-self-center" v-if="connected"></i>
+            <h3 class="col align-self-center">ZakvielBot Playlist</h3>
+            <i class="col-auto fas fa-signal align-self-center" v-if="isConnected"></i>
             <i class="col-auto fas fa-exclamation align-self-center" v-else></i>
-            <i class="col-auto fas fa-hourglass align-self-center" @click="toggleTimes"></i>
-            <i class="col-auto fas fa-play align-self-center" @click="togglePlayer"></i>
-            <i class="col-auto fas fa-moon align-self-center" @click="toggleTheme"></i>
+            <div class="header-newline d-block d-sm-none"></div>
+            <i class="col-auto fas fa-list-ol align-self-center" @click="toggleShowIndex"></i>
+            <i class="col-auto fas fa-clock align-self-center" @click="toggleShowDuration"></i>
+            <i class="col-auto fas fa-hourglass align-self-center" @click="toggleShowAfter"></i>
+            <i class="col-auto fas fa-user align-self-center" @click="toggleShowRequester"></i>
+            <i class="col-auto fas fa-play align-self-center" @click="toggleShowPlayer"></i>
+            <i class="col-auto fas fa-moon align-self-center" @click="toggleDarkTheme"></i>
         </header>
         
         <div class="row">
             
-            <div class="col-lg-4 col-12 fix-padding-right">
-                <div class="video-container" v-if="iframe"><iframe frameborder="0" defer class="preview" :src="'https://youtube.com/embed/'+currentsong.song" alt="Preview"></iframe></div>
-                <img  v-else class="preview" :src="'https://img.youtube.com/vi/'+currentsong.song+'/maxresdefault.jpg'" alt="Preview"></img>
-                <songlist :songlist="currentsong.song !== undefined ? [currentsong] : []" :show-requester="true" :show-times="false" :show-numbers="false" title="Now playing"></songlist>
-                <songlist :songlist="history" :show-requester="true" :show-times="false" :show-numbers="true" title="Previous"></songlist>
+            <div class="col-lg-5 col-12 fix-padding-right">
+                <div v-if="showPlayer" class="video-container"><iframe frameborder="0" defer class="preview" :src="'https://youtube.com/embed/'+currentsong.song" alt="Preview"></iframe></div>
+                <img v-else class="preview" :src="'https://img.youtube.com/vi/'+currentsong.song+'/maxresdefault.jpg'" alt="Preview"></img>
+                <songlist :show-requester="showRequester" :show-after="false" :show-index="showIndex" :show-duration="showDuration" title="Now playing" :zero-index="true" :songlist="currentsong.song !== undefined ? [currentsong] : []"></songlist>
+                <songlist :show-requester="showRequester" :show-after="false" :show-index="showIndex" :show-duration="showDuration" :negative-index="true" title="Previous" :songlist="history"></songlist>
             </div>
-            <div class="col-lg-8 col-12 fix-padding-left">
-                <songlist :songlist="songlist" :show-requester="true" :show-times="times" :show-numbers="true" title="Next"></songlist>
-                <songlist :songlist="playlist" :show-requester="false" :show-times="false" :show-numbers="true" title="Playlist"></songlist>
+            <div class="col-lg-7 col-12 fix-padding-left">
+                <songlist :show-requester="showRequester" :show-after="showAfter" :show-index="showIndex" :show-duration="showDuration" title="Next" :songlist="songlist"></songlist>
+                <songlist :show-requester="false" :show-after="false" :show-index="showIndex" :show-duration="showDuration" title="Playlist" :songlist="playlist"></songlist>
             </div>
         </div>
     </div>
